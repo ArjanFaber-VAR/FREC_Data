@@ -4,4 +4,3 @@ easyocr
 pdfplumber
 pandas
 numpy
-collections
