@@ -1,0 +1,10 @@
+io
+requests
+bs4
+urllib.parse
+easyocr
+pdfplumber
+os
+pandas
+numpy
+collections
