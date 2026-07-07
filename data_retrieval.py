@@ -182,8 +182,6 @@ response.raise_for_status()
 
 soup = BeautifulSoup(response.text, "html.parser")
 
-print(soup.title.text)
-
 
 pdfs = []
 
