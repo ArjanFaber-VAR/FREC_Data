@@ -231,5 +231,44 @@ for pdf in pdfs:
     
     if 'qualifying' in pdf_name:
         df.to_csv(csv_name)
+
+        conn = psycopg2.connect(
+        host="ep-long-glitter-at9v26w9-pooler.c-9.us-east-1.aws.neon.tech",
+        database="neondb",
+        user="neondb_owner",
+        password="npg_P6OimSTt9ngC",
+        port=5432,
+        sslmode="require"
+        )
+        cur = conn.cursor()
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS frec_qualifying (
+            timestamp TEXT,
+            class TEXT,
+            driver TEXT,
+            team TEXT,
+            lap TEXT,
+            best_time TEXT,
+            diff TEXT,
+            kph TEXT,
+            time TEXT,
+        )
+        """)
+        conn.commit()
+
+        insert_query = """
+        INSERT INTO frec_qualifying(
+            timestamp, class, driver, team,
+            lap, best_time, diff, kph,
+            time
+        )
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        """
+
+        cur.executemany(insert_query, df.values.tolist())
+
+        conn.commit()
+    
     if 'race' in pdf_name:
-        df.to_csv(csv_name)
+        #df.to_csv(csv_name)
