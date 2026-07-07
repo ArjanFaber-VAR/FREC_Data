@@ -270,5 +270,5 @@ for pdf in pdfs:
 
         conn.commit()
     
-    if 'race' in pdf_name:
+    #if 'race' in pdf_name:
         #df.to_csv(csv_name)
