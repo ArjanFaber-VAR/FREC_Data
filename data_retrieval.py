@@ -252,7 +252,7 @@ for pdf in pdfs:
             best_time TEXT,
             diff TEXT,
             kph TEXT,
-            time TEXT,
+            time TEXT
         )
         """)
         conn.commit()
