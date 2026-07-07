@@ -2,7 +2,6 @@ requests
 bs4
 easyocr
 pdfplumber
-os
 pandas
 numpy
 collections
