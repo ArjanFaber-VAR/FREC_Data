@@ -4,3 +4,4 @@ easyocr
 pdfplumber
 pandas
 numpy
+playwright
