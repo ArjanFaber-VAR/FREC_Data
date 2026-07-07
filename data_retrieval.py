@@ -269,6 +269,9 @@ for pdf in pdfs:
         cur.executemany(insert_query, df.values.tolist())
 
         conn.commit()
+        cur.close()
+        conn.close()
+    print("Done importing quali session data for FREC.")
     
     #if 'race' in pdf_name:
         #df.to_csv(csv_name)
