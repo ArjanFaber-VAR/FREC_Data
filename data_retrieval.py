@@ -228,8 +228,6 @@ for pdf in pdfs:
     csv_name = pdf_name.replace(".pdf", ".csv")
     
     if 'qualifying' in pdf_name:
-        df.to_csv(csv_name)
-
         conn = psycopg2.connect(
         host="ep-long-glitter-at9v26w9-pooler.c-9.us-east-1.aws.neon.tech",
         database="neondb",
@@ -242,7 +240,6 @@ for pdf in pdfs:
 
         cur.execute("""
         CREATE TABLE IF NOT EXISTS frec_qualifying (
-            timestamp TEXT,
             class TEXT,
             driver TEXT,
             team TEXT,
@@ -257,11 +254,11 @@ for pdf in pdfs:
 
         insert_query = """
         INSERT INTO frec_qualifying(
-            timestamp, class, driver, team,
+            class, driver, team,
             lap, best_time, diff, kph,
             time
         )
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
         """
 
         cur.executemany(insert_query, df.values.tolist())
