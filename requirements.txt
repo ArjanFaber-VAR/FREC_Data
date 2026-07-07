@@ -1,6 +1,5 @@
 requests
 bs4
-urllib.parse
 easyocr
 pdfplumber
 os
