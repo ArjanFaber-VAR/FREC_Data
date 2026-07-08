@@ -160,7 +160,7 @@ def create_dataframe(pdf):
 
     df = df.reset_index(drop=True)
     df['events'] = pdf
-    df["position"] = df.groupby("events").cumcount() + 1
+    df["pos"] = df.groupby("events").cumcount() + 1
     return df
 
 from io import BytesIO
