@@ -160,6 +160,7 @@ def create_dataframe(pdf):
 
     df = df.reset_index(drop=True)
     df['events'] = pdf
+    df["position"] = df.groupby("events").cumcount() + 1
     return df
 
 from io import BytesIO
@@ -252,7 +253,8 @@ for pdf in pdfs:
                 diff TEXT,
                 kph TEXT,
                 time TEXT,
-                events TEXT
+                pos TEXT
+                events TEXT,
             )
             """)
             conn.commit()
@@ -261,9 +263,9 @@ for pdf in pdfs:
             INSERT INTO frec_qualifying (
                 class, driver, team,
                 lap, best_time, diff,
-                kph, time, events
+                kph, time, pos, events
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
 
             if not df.empty:
@@ -300,6 +302,7 @@ for pdf in pdfs:
                 diff TEXT,
                 kph TEXT,
                 time TEXT,
+                pos TEXT,
                 events TEXT
             )
             """)
@@ -309,9 +312,9 @@ for pdf in pdfs:
             INSERT INTO frec_race (
                 class, driver, team,
                 lap, best_time, diff,
-                kph, time,events
+                kph, time, pos,events
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
 
             if not df.empty:
@@ -347,6 +350,7 @@ for pdf in pdfs:
                 diff TEXT,
                 kph TEXT,
                 time TEXT,
+                pos TEXT,
                 events TEXT
             )
             """)
@@ -356,9 +360,9 @@ for pdf in pdfs:
             INSERT INTO frec_practice (
                 class, driver, team,
                 lap, best_time, diff,
-                kph, time, events
+                kph, time, pos, events
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
 
             if not df.empty:
