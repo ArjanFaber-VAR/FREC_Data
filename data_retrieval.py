@@ -209,64 +209,174 @@ def pdf_url_to_image(url, output="page.png", page_number=0):
     return output
 
 for pdf in pdfs:
-    image_file = pdf_url_to_image(
-    pdf
-    )
+    try:
+        print(f"Processing: {pdf}")
 
-    reader = easyocr.Reader(['en'])
+        image_file = pdf_url_to_image(pdf)
 
-    ocr_result = reader.readtext(
-        image_file,
-        detail=1
-    )
+        reader = easyocr.Reader(['en'])
 
-    for item in ocr_result:
-        print(item[1], item[2])
-
-    df = create_dataframe()
-    pdf_name = os.path.basename(urlparse(pdf).path).lower()
-    csv_name = pdf_name.replace(".pdf", ".csv")
-    
-    if 'qualifying' in pdf_name:
-        conn = psycopg2.connect(
-        host="ep-long-glitter-at9v26w9-pooler.c-9.us-east-1.aws.neon.tech",
-        database="neondb",
-        user="neondb_owner",
-        password="npg_P6OimSTt9ngC",
-        port=5432,
-        sslmode="require"
+        ocr_result = reader.readtext(
+            image_file,
+            detail=1
         )
-        cur = conn.cursor()
 
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS frec_qualifying (
-            class TEXT,
-            driver TEXT,
-            team TEXT,
-            lap TEXT,
-            best_time TEXT,
-            diff TEXT,
-            kph TEXT,
-            time TEXT
-        )
-        """)
-        conn.commit()
+        for item in ocr_result:
+            print(item[1], item[2])
 
-        insert_query = """
-        INSERT INTO frec_qualifying(
-            class, driver, team,
-            lap, best_time, diff, kph,
-            time
-        )
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
-        """
+        df = create_dataframe()
 
-        cur.executemany(insert_query, df.values.tolist())
+        pdf_name = os.path.basename(urlparse(pdf).path).lower()
+        csv_name = pdf_name.replace(".pdf", ".csv")
 
-        conn.commit()
-        cur.close()
-        conn.close()
-    print("Done importing quali session data for FREC.")
-    
-    #if 'race' in pdf_name:
-        #df.to_csv(csv_name)
+        if 'qualifying' in pdf_name:
+
+            conn = psycopg2.connect(
+                host="ep-long-glitter-at9v26w9-pooler.c-9.us-east-1.aws.neon.tech",
+                database="neondb",
+                user="neondb_owner",
+                password="npg_P6OimSTt9ngC",
+                port=5432,
+                sslmode="require"
+            )
+
+            cur = conn.cursor()
+
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS frec_qualifying (
+                class TEXT,
+                driver TEXT,
+                team TEXT,
+                lap TEXT,
+                best_time TEXT,
+                diff TEXT,
+                kph TEXT,
+                time TEXT
+            )
+            """)
+            conn.commit()
+
+            insert_query = """
+            INSERT INTO frec_qualifying (
+                class, driver, team,
+                lap, best_time, diff,
+                kph, time
+            )
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            """
+
+            if not df.empty:
+                cur.executemany(insert_query, df.values.tolist())
+                conn.commit()
+                print(f"Inserted {len(df)} rows.")
+            else:
+                print("No rows found in OCR.")
+
+            cur.close()
+            conn.close()
+
+        print("Done importing quali session data for FREC.")
+        if 'race' in pdf_name:
+
+            conn = psycopg2.connect(
+                host="ep-long-glitter-at9v26w9-pooler.c-9.us-east-1.aws.neon.tech",
+                database="neondb",
+                user="neondb_owner",
+                password="npg_P6OimSTt9ngC",
+                port=5432,
+                sslmode="require"
+            )
+
+            cur = conn.cursor()
+
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS frec_race (
+                class TEXT,
+                driver TEXT,
+                team TEXT,
+                lap TEXT,
+                best_time TEXT,
+                diff TEXT,
+                kph TEXT,
+                time TEXT
+            )
+            """)
+            conn.commit()
+
+            insert_query = """
+            INSERT INTO frec_race (
+                class, driver, team,
+                lap, best_time, diff,
+                kph, time
+            )
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            """
+
+            if not df.empty:
+                cur.executemany(insert_query, df.values.tolist())
+                conn.commit()
+                print(f"Inserted {len(df)} rows.")
+            else:
+                print("No rows found in OCR.")
+
+            cur.close()
+            conn.close()
+        print("Done importing race session data for FREC.")
+        if 'practice' in pdf_name:
+
+            conn = psycopg2.connect(
+                host="ep-long-glitter-at9v26w9-pooler.c-9.us-east-1.aws.neon.tech",
+                database="neondb",
+                user="neondb_owner",
+                password="npg_P6OimSTt9ngC",
+                port=5432,
+                sslmode="require"
+            )
+
+            cur = conn.cursor()
+
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS frec_practice (
+                class TEXT,
+                driver TEXT,
+                team TEXT,
+                lap TEXT,
+                best_time TEXT,
+                diff TEXT,
+                kph TEXT,
+                time TEXT
+            )
+            """)
+            conn.commit()
+
+            insert_query = """
+            INSERT INTO frec_practice (
+                class, driver, team,
+                lap, best_time, diff,
+                kph, time
+            )
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            """
+
+            if not df.empty:
+                cur.executemany(insert_query, df.values.tolist())
+                conn.commit()
+                print(f"Inserted {len(df)} rows.")
+            else:
+                print("No rows found in OCR.")
+
+            cur.close()
+            conn.close()
+
+    except Exception as e:
+        print(f"Failed to process {pdf}")
+        print(f"Error: {e}")
+
+        # Close the database connection if it was opened
+        try:
+            cur.close()
+            conn.close()
+        except:
+            pass
+
+        continue
