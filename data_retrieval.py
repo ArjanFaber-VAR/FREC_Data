@@ -253,7 +253,7 @@ for pdf in pdfs:
                 diff TEXT,
                 kph TEXT,
                 time TEXT,
-                pos TEXT
+                pos TEXT,
                 events TEXT,
             )
             """)
