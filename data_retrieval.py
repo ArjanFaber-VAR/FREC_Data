@@ -4,7 +4,7 @@ import numpy as np
 from collections import defaultdict
 import psycopg2
 
-def create_dataframe():
+def create_dataframe(pdf):
 
     # ---------- OCR ----------
     reader = easyocr.Reader(['en'])
@@ -87,7 +87,7 @@ def create_dataframe():
             "best_time":"",
             "diff":"",
             "kph":"",
-            "time":""
+            "time":"",
         }
 
         for item in sorted(row, key=lambda x:x["x"]):
@@ -103,7 +103,7 @@ def create_dataframe():
         # only keep driver rows
         if data["driver"] and not "Drivers" in data["driver"]:
             results.append(data)
-
+    
 
 
     df = pd.DataFrame(results)
@@ -159,7 +159,7 @@ def create_dataframe():
 
 
     df = df.reset_index(drop=True)
-
+    df['events'] = pdf
     return df
 
 from io import BytesIO
@@ -224,7 +224,7 @@ for pdf in pdfs:
         for item in ocr_result:
             print(item[1], item[2])
 
-        df = create_dataframe()
+        df = create_dataframe(pdf)
 
         pdf_name = os.path.basename(urlparse(pdf).path).lower()
         csv_name = pdf_name.replace(".pdf", ".csv")
@@ -251,7 +251,8 @@ for pdf in pdfs:
                 best_time TEXT,
                 diff TEXT,
                 kph TEXT,
-                time TEXT
+                time TEXT,
+                events TEXT
             )
             """)
             conn.commit()
@@ -260,9 +261,9 @@ for pdf in pdfs:
             INSERT INTO frec_qualifying (
                 class, driver, team,
                 lap, best_time, diff,
-                kph, time
+                kph, time, events
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
 
             if not df.empty:
@@ -298,7 +299,8 @@ for pdf in pdfs:
                 best_time TEXT,
                 diff TEXT,
                 kph TEXT,
-                time TEXT
+                time TEXT,
+                events TEXT
             )
             """)
             conn.commit()
@@ -307,9 +309,9 @@ for pdf in pdfs:
             INSERT INTO frec_race (
                 class, driver, team,
                 lap, best_time, diff,
-                kph, time
+                kph, time,events
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
 
             if not df.empty:
@@ -344,7 +346,8 @@ for pdf in pdfs:
                 best_time TEXT,
                 diff TEXT,
                 kph TEXT,
-                time TEXT
+                time TEXT,
+                events TEXT
             )
             """)
             conn.commit()
@@ -353,9 +356,9 @@ for pdf in pdfs:
             INSERT INTO frec_practice (
                 class, driver, team,
                 lap, best_time, diff,
-                kph, time
+                kph, time, events
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
 
             if not df.empty:
