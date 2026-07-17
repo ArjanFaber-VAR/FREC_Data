@@ -324,8 +324,24 @@ for pdf in pdfs:
             else:
                 print("No rows found in OCR.")
 
+            cur.execute("""
+DELETE FROM frec_race a
+USING frec_race b
+WHERE a.ctid < b.ctid
+  AND a.class IS NOT DISTINCT FROM b.class
+  AND a.driver IS NOT DISTINCT FROM b.driver
+  AND a.team IS NOT DISTINCT FROM b.team
+  AND a.best_time IS NOT DISTINCT FROM b.best_time
+  AND a.diff IS NOT DISTINCT FROM b.diff
+  AND a.kph IS NOT DISTINCT FROM b.kph
+  AND a.time IS NOT DISTINCT FROM b.time
+  AND a.pos IS NOT DISTINCT FROM b.pos
+  AND a.events IS NOT DISTINCT FROM b.events;
+""")
+            conn.commit()
             cur.close()
             conn.close()
+            print(f"Deleted {cur.rowcount} duplicate rows.")
         print("Done importing race session data for FREC.")
         if 'practice' in pdf_name:
 
@@ -372,6 +388,22 @@ for pdf in pdfs:
             else:
                 print("No rows found in OCR.")
 
+            cur.execute("""
+DELETE FROM frec_race a
+USING frec_race b
+WHERE a.ctid < b.ctid
+  AND a.class IS NOT DISTINCT FROM b.class
+  AND a.driver IS NOT DISTINCT FROM b.driver
+  AND a.team IS NOT DISTINCT FROM b.team
+  AND a.best_time IS NOT DISTINCT FROM b.best_time
+  AND a.diff IS NOT DISTINCT FROM b.diff
+  AND a.kph IS NOT DISTINCT FROM b.kph
+  AND a.time IS NOT DISTINCT FROM b.time
+  AND a.pos IS NOT DISTINCT FROM b.pos
+  AND a.events IS NOT DISTINCT FROM b.events;
+""")
+            conn.commit()
+            print(f"Deleted {cur.rowcount} duplicate rows.")
             cur.close()
             conn.close()
 
