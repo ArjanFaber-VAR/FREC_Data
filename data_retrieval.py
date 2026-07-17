@@ -389,8 +389,8 @@ WHERE a.ctid < b.ctid
                 print("No rows found in OCR.")
 
             cur.execute("""
-DELETE FROM frec_race a
-USING frec_race b
+DELETE FROM frec_practice a
+USING frec_practice b
 WHERE a.ctid < b.ctid
   AND a.class IS NOT DISTINCT FROM b.class
   AND a.driver IS NOT DISTINCT FROM b.driver
